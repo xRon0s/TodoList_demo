@@ -166,7 +166,7 @@ select {
   width: 6px;
   background-color: #dc3545;
   border-radius: 50%;
-  url(https://github.com/?locale%3Dja)  margin: 2px auto 0;
+  margin: 2px auto 0;
 }
 
 .selected-date-todos {
