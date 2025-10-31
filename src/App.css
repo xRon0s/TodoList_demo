@@ -192,11 +192,11 @@ select {
 }
 
 .react-calendar__month-view__days__day--weekend:nth-child(7n) {
-  color: blue;
+  color: red;
 }
 
 .react-calendar__month-view__days__day--weekend:nth-child(7n-1) {
-  color: red;
+  color: blue;
 }
 
 .react-calendar .react-calendar__month-view__days__day--neighboringMonth {
