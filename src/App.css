@@ -1,0 +1,217 @@
+
+
+.app {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+
+.ten {
+        font-family: ten-mincho, serif;
+        font-weight: 400;
+        font-style: normal;
+      }
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+form {
+  display: flex;
+  margin-bottom: 1rem;
+}
+
+form input[type="text"] {
+  flex-grow: 1;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+form button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+li.completed span {
+  text-decoration: line-through;
+  color: #888;
+}
+
+li input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+li span {
+  flex-grow: 1;
+  width: 5rem;
+}
+
+li button {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+li button:hover {
+  background-color: #c82333;
+}
+
+/* Priority Styles */
+li.high .priority-label {
+  background-color: #ffcdd2;
+  color: #c63737;
+}
+li.medium .priority-label {
+  background-color: #fff9c4;
+  color: #f57f17;
+}
+li.low .priority-label {
+  background-color: #c8e6c9;
+  color: #2e7d32;
+}
+
+.priority-label {
+  width: 5rem;
+  margin-right: 1rem;
+  padding: 0.2rem 0.1rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-align : center;
+}
+
+select {
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.date-label {
+  font-size: 0.8em;
+  color: #888;
+  margin: 0 10px;
+  width: 5rem;
+}
+
+.error {
+  color: red;
+  text-align: center;
+}
+
+.err {
+  margin-bottom: 1rem;
+}
+
+.view-switch-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.view-switch-container button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #555;
+  background-color: white;
+  color: #666;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.view-switch-container button:hover {
+  background-color: #efefef;
+}
+
+.calendar-view {
+  margin-top: 1rem;
+}
+
+.react-calendar {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.todo-dot {
+  height: 6px;
+  width: 6px;
+  background-color: #dc3545;
+  border-radius: 50%;
+  margin: 2px auto 0;
+}
+
+.selected-date-todos {
+  margin-top: 1rem;
+}
+
+.selected-date-todos h3 {
+  border-bottom: 2px solid #eee;
+  padding-bottom: 0.5rem;
+}
+
+.selected-date-todos ul {
+  margin-top: 1rem;
+}
+
+.react-calendar__month-view__weekdays abbr {
+  text-decoration: none;
+  font-family: ten-mincho, serif;
+}
+
+.react-calendar__navigation button {
+  font-family: ten-mincho, serif;
+}
+
+.react-calendar__month-view__days__day--weekend:nth-child(7n) {
+  color: blue;
+}
+
+.react-calendar__month-view__days__day--weekend:nth-child(7n-1) {
+  color: red;
+}
+
+.react-calendar .react-calendar__month-view__days__day--neighboringMonth {
+  color: #999 !important;
+}
+
+.react-calendar__tile {
+  font-family: ten-mincho, serif;
+}
+
+.react-calendar__tile--now {
+  background: #ffff76;
+}
+
+.react-calendar__tile--active {
+  background: #007bff !important;
+  color: white !important;
+}
