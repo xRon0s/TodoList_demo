@@ -163,162 +163,171 @@ const App = () => {
   }, [todos, selectedDate]);
 
   return (
-    <div className="App">
-      <h1>Todo App</h1>
+    // この部分を修正して、中央配置のレイアウトに戻します
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center font-sans p-4">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-lg w-full max-w-3xl">
+        <h1 className="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">
+          Todo App
+        </h1>
 
-      <div className="file-operations">
-        <button onClick={handleSaveToFile}>ファイルに保存</button>
-        <label className="file-load-button">
-          ファイルから読み込む
+        <div className="file-operations">
+          <button onClick={handleSaveToFile}>ファイルに保存</button>
+          <label className="file-load-button">
+            ファイルから読み込む
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleLoadFromFile}
+              style={{ display: "none" }}
+            />
+          </label>
+        </div>
+
+        <form className="add-todo-form" onSubmit={handleAddTodo}>
           <input
-            type="file"
-            accept=".json"
-            onChange={handleLoadFromFile}
-            style={{ display: "none" }}
+            type="text"
+            value={newTodo}
+            onChange={(e) => setNewTodo(e.target.value)}
+            placeholder="新しいタスク"
           />
-        </label>
-      </div>
-
-      {/* 2. フォームに onSubmit を追加 */}
-      <form className="add-todo-form" onSubmit={handleAddTodo}>
-        <input
-          type="text"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-          placeholder="新しいタスク"
-        />
-        <input
-          type="datetime-local"
-          value={
-            newTodoDate
-              ? new Date(newTodoDate.getTime() - newTodoDate.getTimezoneOffset() * 60000)
-                  .toISOString()
-                  .slice(0, 16)
-              : ""
-          }
-          onChange={(e) =>
-            setNewTodoDate(e.target.value ? new Date(e.target.value) : null)
-          }
-        />
-        <select
-          value={newTodoPriority}
-          onChange={(e) => setNewTodoPriority(e.target.value as Priority)}
-        >
-          <option value="high">高</option>
-          <option value="medium">中</option>
-          <option value="low">低</option>
-        </select>
-        <button type="submit">追加</button>
-      </form>
-
-      <div className="view-toggle">
-        <button onClick={() => setView(view === "list" ? "calendar" : "list")}>
-          {view === "list" ? "カレンダー表示に切り替え" : "リスト表示に切り替え"}
-        </button>
-      </div>
-
-      {view === "list" ? (
-        <>
-          <div className="filter-sort-container">
-            <div>
-              <label>フィルター : </label>
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value as "all" | "completed" | "incomplete")}
-              >
-                <option value="all">すべて</option>
-                <option value="completed">完了済み</option>
-                <option value="incomplete">未完了</option>
-              </select>
-            </div>
-            <div>
-              <label>並び替え : </label>
-              <select
-                onChange={(e) =>
-                  setSort(
-                    e.target.value as "date" | "priority"
+          <input
+            type="datetime-local"
+            value={
+              newTodoDate
+                ? new Date(
+                    newTodoDate.getTime() -
+                      newTodoDate.getTimezoneOffset() * 60000
                   )
-                }
-              >
-                <option value="date">日付順</option>
-                <option value="priority">優先度</option>
-              </select>
-            </div>
-          </div>
-
-          <ul className="todo-list">
-            {sortedTodos.map((todo) => (
-              <li
-                key={todo.id}
-                className={`${todo.completed ? "completed" : "none"} ${
-                  todo.priority
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={() => handleToggleTodo(todo.id)}
-                />
-                <div className="relative group flex items-center">
-                  <span
-                    className="task-text"
-                    onClick={() => handleOpenModal(todo)}
-                  >
-                    {todo.text}
-                  </span>
-                  {todo.memo && (
-                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                      {todo.memo}
-                    </span>
-                  )}
-                </div>
-                <span className="date-label">
-                  {todo.date?.toLocaleString()}
-                </span>
-                <span className="priority-label">{todo.priority}</span>
-                <button onClick={() => handleDeleteTodo(todo.id)}>削除</button>
-              </li>
-            ))}
-          </ul>
-        </>
-      ) : (
-        <div className="calendar-view">
-          <Calendar
-            onChange={(value) => setSelectedDate(value as Date)}
-            value={selectedDate}
-            tileContent={({ date, view }) => {
-              if (view === "month") {
-                const hasTodo = todos.some(
-                  (todo) =>
-                    todo.date &&
-                    todo.date.getFullYear() === date.getFullYear() &&
-                    todo.date.getMonth() === date.getMonth() &&
-                    todo.date.getDate() === date.getDate()
-                );
-                return hasTodo ? <div className="todo-dot"></div> : null;
-              }
-              return null;
-            }}
+                    .toISOString()
+                    .slice(0, 16)
+                : ""
+            }
+            onChange={(e) =>
+              setNewTodoDate(e.target.value ? new Date(e.target.value) : null)
+            }
           />
-          <div className="selected-date-todos">
-            <h3>
-              {selectedDate?.toLocaleDateString()} のタスク
-            </h3>
-            {todosForSelectedDate.length > 0 ? (
-              <ul>
-                {todosForSelectedDate.map((todo) => (
-                  <li
-                    key={todo.id}
-                    className={`${todo.completed ? "completed" : "none"} ${
-                      todo.priority
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={todo.completed}
-                      onChange={() => handleToggleTodo(todo.id)}
-                    />
-                    <div className="relative group flex items-center">
+          <select
+            value={newTodoPriority}
+            onChange={(e) => setNewTodoPriority(e.target.value as Priority)}
+          >
+            <option value="high">高</option>
+            <option value="medium">中</option>
+            <option value="low">低</option>
+          </select>
+          <button type="submit">追加</button>
+        </form>
+
+        <div className="view-toggle">
+          <button onClick={() => setView(view === "list" ? "calendar" : "list")}>
+            {view === "list"
+              ? "カレンダー表示に切り替え"
+              : "リスト表示に切り替え"}
+          </button>
+        </div>
+
+        {view === "list" ? (
+          <>
+            <div className="filter-sort-container">
+              <div>
+                <label>フィルター : </label>
+                <select
+                  value={filter}
+                  onChange={(e) =>
+                    setFilter(
+                      e.target.value as "all" | "completed" | "incomplete"
+                    )
+                  }
+                >
+                  <option value="all">すべて</option>
+                  <option value="completed">完了済み</option>
+                  <option value="incomplete">未完了</option>
+                </select>
+              </div>
+              <div>
+                <label>並び替え : </label>
+                <select
+                  onChange={(e) =>
+                    setSort(e.target.value as "date" | "priority")
+                  }
+                >
+                  <option value="date">日付順</option>
+                  <option value="priority">優先度</option>
+                </select>
+              </div>
+            </div>
+
+            <ul className="todo-list">
+              {sortedTodos.map((todo) => (
+                <li
+                  key={todo.id}
+                  className={`${todo.completed ? "completed" : "none"} ${
+                    todo.priority
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={todo.completed}
+                    onChange={() => handleToggleTodo(todo.id)}
+                  />
+                  <div className="relative group flex items-center">
+                    <span
+                      className="task-text"
+                      onClick={() => handleOpenModal(todo)}
+                    >
+                      {todo.text}
+                    </span>
+                    {todo.memo && (
+                      <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                        {todo.memo}
+                      </span>
+                    )}
+                  </div>
+                  <span className="date-label">
+                    {todo.date?.toLocaleString()}
+                  </span>
+                  <span className="priority-label">{todo.priority}</span>
+                  <button onClick={() => handleDeleteTodo(todo.id)}>削除</button>
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          <div className="calendar-view">
+            <Calendar
+              onChange={(value) => setSelectedDate(value as Date)}
+              value={selectedDate}
+              tileContent={({ date, view }) => {
+                if (view === "month") {
+                  const hasTodo = todos.some(
+                    (todo) =>
+                      todo.date &&
+                      todo.date.getFullYear() === date.getFullYear() &&
+                      todo.date.getMonth() === date.getMonth() &&
+                      todo.date.getDate() === date.getDate()
+                  );
+                  return hasTodo ? <div className="todo-dot"></div> : null;
+                }
+                return null;
+              }}
+            />
+            <div className="selected-date-todos">
+              <h3>
+                {selectedDate?.toLocaleDateString()} のタスク
+              </h3>
+              {todosForSelectedDate.length > 0 ? (
+                <ul>
+                  {todosForSelectedDate.map((todo) => (
+                    <li
+                      key={todo.id}
+                      className={`${todo.completed ? "completed" : "none"} ${
+                        todo.priority
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={todo.completed}
+                        onChange={() => handleToggleTodo(todo.id)}
+                      />
                       <div className="relative group flex items-center">
                         <span
                           className="task-text"
@@ -332,31 +341,26 @@ const App = () => {
                           </span>
                         )}
                       </div>
-                      {todo.memo && (
-                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                          {todo.memo}
-                        </span>
-                      )}
-                    </div>
-                    <span className="priority-label">{todo.priority}</span>
-                    <button onClick={() => handleDeleteTodo(todo.id)}>
-                      削除
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>この日のタスクはありません。</p>
-            )}
+                      <span className="priority-label">{todo.priority}</span>
+                      <button onClick={() => handleDeleteTodo(todo.id)}>
+                        削除
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>この日のタスクはありません。</p>
+              )}
+            </div>
           </div>
-        </div>
-      )}
-      <MemoModal
-        isOpen={isModalOpen}
-        initialMemo={selectedTodo?.memo}
-        onClose={handleCloseModal}
-        onSave={handleSaveMemo}
-      />
+        )}
+        <MemoModal
+          isOpen={isModalOpen}
+          initialMemo={selectedTodo?.memo}
+          onClose={handleCloseModal}
+          onSave={handleSaveMemo}
+        />
+      </div>
     </div>
   );
 };

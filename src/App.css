@@ -1,3 +1,15 @@
+/* 以前の .App スタイルは不要になる場合があります */
+/* .App { text-align: center; } */
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .app {
   max-width: 600px;
   margin: 2rem auto;
@@ -99,13 +111,13 @@ li.low .priority-label {
 }
 
 .priority-label {
-  width: 5rem;
-  margin-right: 1rem;
-  padding: 0.2rem 0.1rem;
-  border-radius: 12px;
-  font-size: 0.8rem;
-  font-weight: bold;
-  text-align : center;
+  display: inline-block;
+  width: 60px; /* 幅を固定 */
+  text-align: center;
+  border-radius: 4px;
+  padding: 2px 0;
+  color: white;
+  margin: 0 8px;
 }
 
 select {
@@ -223,24 +235,61 @@ select {
   text-decoration: underline;
 }
 
+/* ファイル保存・読み込みボタンのスタイル調整 */
 .file-operations {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 24px;
   justify-content: center;
 }
 
 .file-operations button,
 .file-load-button {
-  padding: 8px 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: #f0f0f0;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4a90e2; /* A more pleasant blue */
+  color: white;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease;
 }
 
 .file-operations button:hover,
 .file-load-button:hover {
-  background-color: #e0e0e0;
+  background-color: #357abd; /* Darker blue on hover */
+  transform: translateY(-1px);
+}
+
+/* タスク追加フォームのスタイル */
+.add-todo-form {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 10px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.add-todo-form input,
+.add-todo-form select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+}
+
+.add-todo-form button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #50e3c2; /* A nice green */
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.add-todo-form button:hover {
+  background-color: #29b898;
 }
