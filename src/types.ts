@@ -7,4 +7,5 @@ export interface Todo {
   completed: boolean;
   priority: Priority;
   date: Date | null;
+  memo?: string;
 }

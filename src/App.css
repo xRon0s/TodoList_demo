@@ -215,3 +215,12 @@ select {
   background: #007bff !important;
   color: white !important;
 }
+
+.task-text {
+  cursor: pointer;
+  margin: 0 8px;
+}
+
+.task-text:hover {
+  text-decoration: underline;
+}

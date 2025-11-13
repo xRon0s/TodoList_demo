@@ -3,6 +3,24 @@ import type { Todo, Priority } from "./types";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
+import MemoModal from "./components/MemoModal";
+
+const MemoIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-4 w-4 text-gray-500 ml-2 inline"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+    />
+  </svg>
+);
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -14,6 +32,29 @@ const App = () => {
   >("default");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTodo, setselectedTodo] = useState<Todo | null>(null);
+
+  const handleOpenModal = (todo: Todo) => {
+    setselectedTodo(todo);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setselectedTodo(null);
+  };
+
+  const handleSaveMemo = (memo: string) => {
+    if (!selectedTodo) return;
+    setTodos(
+      todos.map((todo) =>
+        todo.id === selectedTodo.id ? { ...todo, memo: memo } : todo
+      )
+    );
+    handleCloseModal();
+  };
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,7 +195,13 @@ const App = () => {
                   checked={todo.completed}
                   onChange={() => handleToggleTodo(todo.id)}
                 />
-                <span>{todo.text}</span>
+                <span
+                className="task-text"
+                onClick={() => handleOpenModal(todo)}
+                >
+                  {todo.text}
+                  {todo.memo && <MemoIcon />}
+                </span>
                 <span className="date-label">
                   {todo.date?.toLocaleString()}
                 </span>
@@ -201,7 +248,12 @@ const App = () => {
                       checked={todo.completed}
                       onChange={() => handleToggleTodo(todo.id)}
                     />
-                    <span>{todo.text}</span>
+                    <span
+                    className="task-text"
+                    onClick={() => handleOpenModal(todo)}
+                    >{todo.text}
+                    {todo.memo && <MemoIcon />}
+                    </span>
                     <span className="priority-label">{todo.priority}</span>
                     <button onClick={() => handleDeleteTodo(todo.id)}>
                       削除
@@ -215,6 +267,12 @@ const App = () => {
           </div>
         </div>
       )}
+      <MemoModal
+        isOpen={isModalOpen}
+        initialMemo={selectedTodo?.memo}
+        onClose={handleCloseModal}
+        onSave={handleSaveMemo}
+      />
     </div>
   );
 };
