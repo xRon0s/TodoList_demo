@@ -5,29 +5,79 @@ import "react-calendar/dist/Calendar.css";
 import "./App.css";
 import MemoModal from "./components/MemoModal";
 
-
 const App = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [inputText, setInputText] = useState("");
-  const [date, setDate] = useState<string>("");
-  const [priority, setPriority] = useState<Priority>("medium");
-  const [sortBy, setSortBy] = useState<
-    "priority" | "default" | "completed" | "date"
-  >("default");
+  const [todos, setTodos] = useState<Todo[]>(() => {
+    // ページ読み込み時の自動読み込みは削除し、空の配列から開始
+    return [];
+  });
+  const [newTodo, setNewTodo] = useState("");
+  const [newTodoDate, setNewTodoDate] = useState<Date | null>(new Date());
+  const [newTodoPriority, setNewTodoPriority] = useState<Priority>("medium");
+  const [filter, setFilter] = useState<"all" | "completed" | "incomplete">(
+    "all"
+  );
+  const [sort, setSort] = useState<"date" | "priority">("date");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTodo, setselectedTodo] = useState<Todo | null>(null);
+  const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
+
+  // --- 1. ローカルストレージへの自動保存機能を削除 ---
+  // useEffect(() => {
+  //   try {
+  //     localStorage.setItem("todos", JSON.stringify(todos));
+  //   } catch (error) {
+  //     console.error("Failed to save todos to local storage:", error);
+  //   }
+  // }, [todos]);
+
+  // --- 2. ファイル保存・読み込み機能を追加 ---
+  const handleSaveToFile = () => {
+    const jsonString = JSON.stringify(todos, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "todos.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleLoadFromFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result;
+      if (typeof text === "string") {
+        try {
+          const loadedTodos = JSON.parse(text);
+          // ここで読み込んだデータが正しい形式か簡単なチェックをすることも可能
+          setTodos(loadedTodos);
+        } catch (error) {
+          console.error("Error parsing JSON file:", error);
+          alert("無効なファイル形式です。");
+        }
+      }
+    };
+    reader.readAsText(file);
+    // 同じファイルを連続で読み込めるように値をリセット
+    event.target.value = "";
+  };
 
   const handleOpenModal = (todo: Todo) => {
-    setselectedTodo(todo);
+    setSelectedTodo(todo);
     setIsModalOpen(true);
   };
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setselectedTodo(null);
+    setSelectedTodo(null);
   };
 
   const handleSaveMemo = (memo: string) => {
@@ -42,20 +92,21 @@ const App = () => {
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputText.length > 15) {
+    if (newTodo.length > 15) {
       return;
     }
-    if (inputText.trim() === "") return;
-    const newTodo: Todo = {
+    if (newTodo.trim() === "") return;
+    const todoDate = newTodoDate ? new Date(newTodoDate) : null;
+    const newTodoItem: Todo = {
       id: Date.now(),
-      text: inputText,
+      text: newTodo,
       completed: false,
-      priority: priority,
-      date: date ? new Date(date) : null,
+      priority: newTodoPriority,
+      date: todoDate,
     };
-    setTodos([...todos, newTodo]);
-    setInputText("");
-    setDate("");
+    setTodos([...todos, newTodoItem]);
+    setNewTodo("");
+    setNewTodoDate(new Date());
   };
 
   const handleToggleTodo = (id: number) => {
@@ -77,14 +128,19 @@ const App = () => {
   };
 
   const sortedTodos = useMemo(() => {
-    const sorted = [...todos];
-    if (sortBy === "priority") {
+    let filteredTodos = todos;
+    if (filter === "completed") {
+      filteredTodos = todos.filter((todo) => todo.completed);
+    } else if (filter === "incomplete") {
+      filteredTodos = todos.filter((todo) => !todo.completed);
+    }
+
+    const sorted = [...filteredTodos];
+    if (sort === "priority") {
       sorted.sort(
         (a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]
       );
-    } else if (sortBy === "completed") {
-      sorted.sort((a, b) => Number(b.completed) - Number(a.completed));
-    } else if (sortBy === "date") {
+    } else if (sort === "date") {
       sorted.sort((a, b) => {
         if (a.date === null) return 1;
         if (b.date === null) return -1;
@@ -92,7 +148,7 @@ const App = () => {
       });
     }
     return sorted;
-  }, [todos, sortBy]);
+  }, [todos, sort, filter]);
 
   const todosForSelectedDate = useMemo(() => {
     if (!selectedDate) return [];
@@ -107,38 +163,55 @@ const App = () => {
   }, [todos, selectedDate]);
 
   return (
-    <div className="app">
-      <h1>TodoApp</h1>
-      <form onSubmit={handleAddTodo}>
+    <div className="App">
+      <h1>Todo App</h1>
+
+      <div className="file-operations">
+        <button onClick={handleSaveToFile}>ファイルに保存</button>
+        <label className="file-load-button">
+          ファイルから読み込む
+          <input
+            type="file"
+            accept=".json"
+            onChange={handleLoadFromFile}
+            style={{ display: "none" }}
+          />
+        </label>
+      </div>
+
+      {/* 2. フォームに onSubmit を追加 */}
+      <form className="add-todo-form" onSubmit={handleAddTodo}>
         <input
           type="text"
-          value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="追加するタスクの名前を入力"
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+          placeholder="新しいタスク"
         />
         <input
           type="datetime-local"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
+          value={
+            newTodoDate
+              ? new Date(newTodoDate.getTime() - newTodoDate.getTimezoneOffset() * 60000)
+                  .toISOString()
+                  .slice(0, 16)
+              : ""
+          }
+          onChange={(e) =>
+            setNewTodoDate(e.target.value ? new Date(e.target.value) : null)
+          }
         />
         <select
-          value={priority}
-          onChange={(e) => setPriority(e.target.value as Priority)}
+          value={newTodoPriority}
+          onChange={(e) => setNewTodoPriority(e.target.value as Priority)}
         >
-          <option value="high">high</option>
-          <option value="medium">medium</option>
-          <option value="low">low</option>
+          <option value="high">高</option>
+          <option value="medium">中</option>
+          <option value="low">低</option>
         </select>
         <button type="submit">追加</button>
       </form>
 
-      {inputText.length > 15 && (
-        <span className="error">⚠タスク名は15文字以内で入力してください</span>
-      )}
-
-      <div className="err"></div>
-
-      <div className="view-switch-container">
+      <div className="view-toggle">
         <button onClick={() => setView(view === "list" ? "calendar" : "list")}>
           {view === "list" ? "カレンダー表示に切り替え" : "リスト表示に切り替え"}
         </button>
@@ -146,27 +219,34 @@ const App = () => {
 
       {view === "list" ? (
         <>
-          <div>
-            <label>並び替え : </label>
-            <select
-              onChange={(e) =>
-                setSortBy(
-                  e.target.value as
-                    | "priority"
-                    | "default"
-                    | "completed"
-                    | "date"
-                )
-              }
-            >
-              <option value="default">追加順</option>
-              <option value="priority">優先度</option>
-              <option value="completed">完了</option>
-              <option value="date">日付順</option>
-            </select>
+          <div className="filter-sort-container">
+            <div>
+              <label>フィルター : </label>
+              <select
+                value={filter}
+                onChange={(e) => setFilter(e.target.value as "all" | "completed" | "incomplete")}
+              >
+                <option value="all">すべて</option>
+                <option value="completed">完了済み</option>
+                <option value="incomplete">未完了</option>
+              </select>
+            </div>
+            <div>
+              <label>並び替え : </label>
+              <select
+                onChange={(e) =>
+                  setSort(
+                    e.target.value as "date" | "priority"
+                  )
+                }
+              >
+                <option value="date">日付順</option>
+                <option value="priority">優先度</option>
+              </select>
+            </div>
           </div>
 
-          <ul>
+          <ul className="todo-list">
             {sortedTodos.map((todo) => (
               <li
                 key={todo.id}
