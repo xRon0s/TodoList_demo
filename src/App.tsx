@@ -179,7 +179,6 @@ const App = () => {
                   checked={todo.completed}
                   onChange={() => handleToggleTodo(todo.id)}
                 />
-                {/* --- ここから変更 --- */}
                 <div className="relative group flex items-center">
                   <span
                     className="task-text"
@@ -193,7 +192,6 @@ const App = () => {
                     </span>
                   )}
                 </div>
-                {/* --- ここまで変更 --- */}
                 <span className="date-label">
                   {todo.date?.toLocaleString()}
                 </span>
@@ -241,12 +239,19 @@ const App = () => {
                       onChange={() => handleToggleTodo(todo.id)}
                     />
                     <div className="relative group flex items-center">
-                      <span
-                        className="task-text"
-                        onClick={() => handleOpenModal(todo)}
-                      >
-                        {todo.text}
-                      </span>
+                      <div className="relative group flex items-center">
+                        <span
+                          className="task-text"
+                          onClick={() => handleOpenModal(todo)}
+                        >
+                          {todo.text}
+                        </span>
+                        {todo.memo && (
+                          <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            {todo.memo}
+                          </span>
+                        )}
+                      </div>
                       {todo.memo && (
                         <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                           {todo.memo}
