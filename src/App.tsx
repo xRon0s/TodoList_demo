@@ -5,22 +5,6 @@ import "react-calendar/dist/Calendar.css";
 import "./App.css";
 import MemoModal from "./components/MemoModal";
 
-const MemoIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-4 w-4 text-gray-500 ml-2 inline"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-    />
-  </svg>
-);
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -195,13 +179,21 @@ const App = () => {
                   checked={todo.completed}
                   onChange={() => handleToggleTodo(todo.id)}
                 />
-                <span
-                className="task-text"
-                onClick={() => handleOpenModal(todo)}
-                >
-                  {todo.text}
-                  {todo.memo && <MemoIcon />}
-                </span>
+                {/* --- ここから変更 --- */}
+                <div className="relative group flex items-center">
+                  <span
+                    className="task-text"
+                    onClick={() => handleOpenModal(todo)}
+                  >
+                    {todo.text}
+                  </span>
+                  {todo.memo && (
+                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                      {todo.memo}
+                    </span>
+                  )}
+                </div>
+                {/* --- ここまで変更 --- */}
                 <span className="date-label">
                   {todo.date?.toLocaleString()}
                 </span>
@@ -248,12 +240,19 @@ const App = () => {
                       checked={todo.completed}
                       onChange={() => handleToggleTodo(todo.id)}
                     />
-                    <span
-                    className="task-text"
-                    onClick={() => handleOpenModal(todo)}
-                    >{todo.text}
-                    {todo.memo && <MemoIcon />}
-                    </span>
+                    <div className="relative group flex items-center">
+                      <span
+                        className="task-text"
+                        onClick={() => handleOpenModal(todo)}
+                      >
+                        {todo.text}
+                      </span>
+                      {todo.memo && (
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs p-2 bg-gray-800 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                          {todo.memo}
+                        </span>
+                      )}
+                    </div>
                     <span className="priority-label">{todo.priority}</span>
                     <button onClick={() => handleDeleteTodo(todo.id)}>
                       削除

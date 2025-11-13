@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 
-interface MwmoModalProps {
+interface MemoModalProps {
     isOpen:boolean;
     initialMemo?: string;
     onClose: () => void;
     onSave: (memo:string) => void;
 }
 
-const MemoModal: React.FC<MwmoModalProps> = ({
+const MemoModal: React.FC<MemoModalProps> = ({
     isOpen,
     initialMemo = "",
     onClose,
@@ -32,7 +32,7 @@ const MemoModal: React.FC<MwmoModalProps> = ({
         <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">メモの編集</h2>
             <textarea
-            className="w-full h-40 p-2 border border-gray-300 rounded-md resize-none"
+            className="w-full h-40 p-3 bg-gray-50 border border-gray-300 rounded-lg resize-none text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow duration-200"
             value={memo}
             onChange={(e) => setMemo(e.target.value)}
             placeholder="メモや補足情報を入力..."
