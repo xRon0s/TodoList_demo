@@ -19,6 +19,7 @@
 h1 {
   text-align: center;
   color: #333;
+  border-bottom: double 5px #FFC778;
 }
 
 form {
@@ -214,4 +215,14 @@ select {
 .react-calendar__tile--active {
   background: #007bff !important;
   color: white !important;
+}
+
+.todo-label{
+  padding: 0.25em 0.5em;
+  background: transparent;
+  border-left: solid 5px #7db4e6;
+}
+
+.todo-label:hover {
+  color: rgb(20, 55, 100);
 }

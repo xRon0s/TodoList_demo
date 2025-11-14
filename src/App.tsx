@@ -67,7 +67,7 @@ const App = () => {
       });
     }
     return sorted;
-  }, [todos, sortBy]);
+  }, [todos,sortBy ]);
 
   const todosForSelectedDate = useMemo(() => {
     if (!selectedDate) return [];
@@ -154,7 +154,7 @@ const App = () => {
                   checked={todo.completed}
                   onChange={() => handleToggleTodo(todo.id)}
                 />
-                <span>{todo.text}</span>
+                <span className="todo-label">{todo.text}</span>
                 <span className="date-label">
                   {todo.date?.toLocaleString()}
                 </span>
@@ -201,7 +201,7 @@ const App = () => {
                       checked={todo.completed}
                       onChange={() => handleToggleTodo(todo.id)}
                     />
-                    <span>{todo.text}</span>
+                    <span className="todo-label">{todo.text}</span>
                     <span className="priority-label">{todo.priority}</span>
                     <button onClick={() => handleDeleteTodo(todo.id)}>
                       削除
