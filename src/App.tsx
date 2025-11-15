@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import type { Todo, Priority } from "./types";
-import {match} from "./.hiddenlist";
+import {match, special_event} from "./.hiddenlist";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
@@ -178,7 +178,7 @@ const App = () => {
             <div className="backup-restore-container">
         <button onClick={handleExportTodos}>バックアップ</button>
         <label htmlFor="import-button" className="import-label">
-          復元
+          復元する
         </label>
         <input
           id="import-button"
@@ -210,6 +210,10 @@ const App = () => {
         </select>
         <button type="submit">追加</button>
       </form>
+
+      {(special_event as readonly string[]).includes(inputText) && (
+        <span className="errr">📅</span>
+      )}
 
       {(match as readonly string[]).includes(inputText) && (
         <span className="errr">趣味が合いますね</span>
