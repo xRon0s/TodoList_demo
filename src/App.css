@@ -1,4 +1,7 @@
-
+/* サイトの後ろ側外要素 */
+.body{
+  cursor: cell;
+}
 
 .app {
   max-width: 600px;
@@ -7,8 +10,8 @@
   background: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
-
 
 .ten {
         font-family: ten-mincho, serif;
@@ -63,6 +66,21 @@ li {
 li.completed span {
   text-decoration: line-through;
   color: #888;
+}
+
+li.completed .todo-label{
+  border-left: solid 5px #92abc1;
+}
+
+.todo-label{
+  padding: 0.25em 0.5em;
+  background: transparent;
+  border-left: solid 5px #7db4e6;
+  cursor: default !important;
+}
+
+.todo-label:hover {
+  color: rgb(20, 55, 100);
 }
 
 li input[type="checkbox"] {
@@ -130,6 +148,10 @@ select {
   text-align: center;
 }
 
+.errr{
+  text-align: center;
+}
+
 .err {
   margin-bottom: 1rem;
 }
@@ -152,6 +174,29 @@ select {
   background-color: #efefef;
 }
 
+.backup-restore-container {
+  text-align: center;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.backup-restore-container button,
+.import-label {
+  padding: 0.5rem 1rem;
+  border: 1px solid #555;
+  background-color: white;
+  color: #666;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.backup-restore-container button:hover,
+.import-label:hover {
+  background-color: #efefef;
+}
+
 .calendar-view {
   margin-top: 1rem;
 }
@@ -163,9 +208,9 @@ select {
 }
 
 .todo-dot {
-  height: 6px;
-  width: 6px;
-  background-color: #dc3545;
+  height: 7px;
+  width: 7px;
+  background-color: #f57f17;
   border-radius: 50%;
   margin: 2px auto 0;
 }
@@ -217,12 +262,33 @@ select {
   color: white !important;
 }
 
-.todo-label{
-  padding: 0.25em 0.5em;
-  background: transparent;
-  border-left: solid 5px #7db4e6;
+.secret-activated {
+  animation: rainbow-bg 5s linear infinite;
 }
 
-.todo-label:hover {
-  color: rgb(20, 55, 100);
+@keyframes rainbow-bg {
+  0% {
+    background-color: #ffadad;
+  }
+  15% {
+    background-color: #ffd6a5;
+  }
+  30% {
+    background-color: #fdffb6;
+  }
+  45% {
+    background-color: #caffbf;
+  }
+  60% {
+    background-color: #9bf6ff;
+  }
+  75% {
+    background-color: #a0c4ff;
+  }
+  90% {
+    background-color: #bdb2ff;
+  }
+  100% {
+    background-color: #ffadad;
+  }
 }

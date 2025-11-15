@@ -1,8 +1,28 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import type { Todo, Priority } from "./types";
+import {match} from "./.hiddenlist";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css";
+
+const secretCode = [
+  "ArrowUp",
+  "ArrowUp",
+  "ArrowDown",
+  "ArrowDown",
+  "ArrowLeft",
+  "ArrowRight",
+  "ArrowLeft",
+  "ArrowRight",
+  "b",
+  "a"
+];
+
+const priorityOrder: Record<Priority, number> = {
+  high: 1,
+  medium: 2,
+  low: 3,
+};
 
 const App = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -14,6 +34,43 @@ const App = () => {
   >("default");
   const [view, setView] = useState<"list" | "calendar">("list");
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+
+  const [keySequence, setKeySequence] = useState<string[]>([]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const requiredKey = secretCode[keySequence.length];
+
+      if (e.key === requiredKey) {
+        const newSequence = [...keySequence, e.key];
+        setKeySequence(newSequence);
+
+        if (newSequence.length === secretCode.length) {
+          alert("ゲーム中毒…？")
+          document.body.classList.add("secret-activated");
+          
+
+          setKeySequence([]);
+        }
+      } else {
+        setKeySequence([]);
+        document.body.classList.remove("secret-active");
+      }
+    };
+
+    const handleReset = () => {
+      setKeySequence([]);
+      document.body.classList.remove("secret-active");
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("click", handleReset);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("click", handleReset);
+    };
+  }, [keySequence]);
 
   const handleAddTodo = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +90,46 @@ const App = () => {
     setDate("");
   };
 
+  const handleExportTodos = () => {
+    if (todos.length === 0) {
+      alert("エクスポートするタスクがありません。");
+      return;
+    }
+    const jsonString = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(todos, null, 2)
+    )}`;
+    const link = document.createElement("a");
+    link.href = jsonString;
+    link.download = "todos-backup.json";
+    link.click();
+  };
+
+  const handleImportTodos = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileReader = new FileReader();
+    const { files } = e.target;
+
+    if (files && files[0]) {
+      fileReader.readAsText(files[0], "UTF-8");
+      fileReader.onload = (event) => {
+        try {
+          const result = event.target?.result;
+          if (typeof result === "string") {
+            const importedTodos: Todo[] = JSON.parse(result).map((todo: any) => ({
+              ...todo,
+              date: todo.date ? new Date(todo.date) : null,
+            }));
+            setTodos(importedTodos);
+          }
+        } catch (error) {
+          console.error("ファイルの読み込みに失敗しました:", error);
+          alert("ファイルの形式が正しくありません。");
+        }
+      };
+      // Reset the input value to allow re-uploading the same file
+      e.target.value = "";
+    }
+  };
+
   const handleToggleTodo = (id: number) => {
     setTodos(
       todos.map((todo) =>
@@ -43,12 +140,6 @@ const App = () => {
 
   const handleDeleteTodo = (id: number) => {
     setTodos(todos.filter((todo) => todo.id !== id));
-  };
-
-  const priorityOrder: Record<Priority, number> = {
-    high: 1,
-    medium: 2,
-    low: 3,
   };
 
   const sortedTodos = useMemo(() => {
@@ -67,7 +158,7 @@ const App = () => {
       });
     }
     return sorted;
-  }, [todos,sortBy ]);
+  }, [todos,sortBy]);
 
   const todosForSelectedDate = useMemo(() => {
     if (!selectedDate) return [];
@@ -84,6 +175,19 @@ const App = () => {
   return (
     <div className="app">
       <h1>TodoApp</h1>
+            <div className="backup-restore-container">
+        <button onClick={handleExportTodos}>バックアップ</button>
+        <label htmlFor="import-button" className="import-label">
+          復元
+        </label>
+        <input
+          id="import-button"
+          type="file"
+          accept=".json"
+          onChange={handleImportTodos}
+          style={{ display: "none" }}
+        />
+      </div>
       <form onSubmit={handleAddTodo}>
         <input
           type="text"
@@ -106,6 +210,10 @@ const App = () => {
         </select>
         <button type="submit">追加</button>
       </form>
+
+      {(match as readonly string[]).includes(inputText) && (
+        <span className="errr">趣味が合いますね</span>
+      )}
 
       {inputText.length > 15 && (
         <span className="error">⚠タスク名は15文字以内で入力してください</span>
