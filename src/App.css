@@ -1,8 +1,9 @@
-/* サイトの後ろ側外要素 */
+/* サイトの背面要素 */
 .body{
   cursor: cell;
 }
 
+/* サイトの前面要素 */
 .app {
   max-width: 600px;
   margin: 2rem auto;
